@@ -1,5 +1,5 @@
+const User=require('../model/user')
 const Job = require("../model/jobs");
-const User = require("../model/user");
 
 const cloudinary = require("cloudinary").v2;
 
