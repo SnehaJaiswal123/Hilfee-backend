@@ -1,6 +1,5 @@
-const User=require('../model/user')
 const expressAsyncHandler=require('express-async-handler')
-
+const User=require('../model/user')
 const signup=expressAsyncHandler(async(req,res)=>{
   const {email,password,cpassword}=req.body;
     try{
