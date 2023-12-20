@@ -9,6 +9,13 @@ const jobSchema=mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         required:true,
         ref:'User'
+    },
+    videoUrl:{
+        type:String
+    },
+    status:{
+        type:Boolean,
+        default:false
     }
 })
 

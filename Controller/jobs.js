@@ -1,5 +1,6 @@
 const Job = require("../Model/jobs");
 const User = require("../Model/user");
+const multer=require('multer')
 
 const cloudinary = require("cloudinary").v2;
 
@@ -12,7 +13,7 @@ cloudinary.config({
 const createJob = async (req, res) => {
   try {
     console.log(req.body);
-    const newJob = await Job.create(req.body);
+    const newJob = await Job.create({status:false,...req.body});
     res.send({ newJob });
     console.log({ newJob });
   } catch (e) {
@@ -35,18 +36,35 @@ const getUserRole = async (req, res) => {
   }
 };
 
+
+
 const recording = async (req, res) => {
+  console.log("recording api called");
+  const videoFile = req.files.video;
+  const id=req.body.id
   try {
-    const result = await cloudinary.uploader
-      .upload_stream({ resource_type: "video" }, (error, result) => {
-        if (error) throw error;
-        res.json({ secure_url: result.secure_url });
-      })
-      .end(req.file.buffer);
+    const result = await cloudinary.uploader.upload(videoFile.tempFilePath, { resource_type: 'video' });
+    const updatedJob=await Job.findByIdAndUpdate(id, {videoUrl:result.secure_url, status:true }); 
+    console.log({updatedJob});
+    res.json(result.secure_url)
   } catch (error) {
-    console.error("Error uploading to Cloudinary:", error);
-    res.status(500).json({ error: "Error uploading to Cloudinary" });
+    console.log(error.message);
+    res.status(500).json({ error: error.message });
   }
 };
 
-module.exports = { createJob, getUserRole, recording };
+const getjobbyid = async (req, res) => {
+  console.log("recording by id api called");
+  const id = req.query.id
+  console.log(id);
+  try {
+    const job=await Job.findById(id); 
+    console.log(job);
+    res.json(job)
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { createJob, getUserRole, recording,getjobbyid };
